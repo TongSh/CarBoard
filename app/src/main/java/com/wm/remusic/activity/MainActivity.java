@@ -268,12 +268,12 @@ public class MainActivity extends BaseActivity implements CardPickerDialog.Click
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             if ((System.currentTimeMillis() - time > 1000)) {
-                Toast.makeText(this, "再按一次返回桌面", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "再按一次返回主界面", Toast.LENGTH_SHORT).show();
                 time = System.currentTimeMillis();
             } else {
-                Intent intent = new Intent(Intent.ACTION_MAIN);
-                intent.addCategory(Intent.CATEGORY_HOME);
+                Intent intent = new Intent(MainActivity.this,Main2Activity.class);
                 startActivity(intent);
+                finish();
             }
             return true;
         } else {

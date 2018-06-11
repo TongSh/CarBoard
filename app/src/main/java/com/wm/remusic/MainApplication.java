@@ -2,6 +2,7 @@ package com.wm.remusic;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Environment;
 import android.support.annotation.ColorInt;
@@ -15,6 +16,7 @@ import com.facebook.imagepipeline.cache.MemoryCacheParams;
 import com.facebook.imagepipeline.core.ImagePipeline;
 import com.facebook.imagepipeline.core.ImagePipelineConfig;
 import com.google.gson.Gson;
+import com.wm.remusic.activity.Main2Activity;
 import com.wm.remusic.handler.UnceHandler;
 import com.wm.remusic.permissions.Nammu;
 import com.wm.remusic.provider.PlaylistInfo;
@@ -130,11 +132,19 @@ public class MainApplication extends Application implements ThemeUtils.switchCol
 //        return application.refWatcher;
 //    }
 
+    private Thread.UncaughtExceptionHandler restartHandler = new Thread.UncaughtExceptionHandler() {
+        public void uncaughtException(Thread thread, Throwable ex) {
+            Intent intent = new Intent(getApplicationContext(), Main2Activity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        }
+    };
+
     //捕获全局Exception 重启界面
     public void initCatchException() {
         //设置该CrashHandler为程序的默认处理器
         UnceHandler catchExcep = new UnceHandler(this);
-        Thread.setDefaultUncaughtExceptionHandler(catchExcep);
+        Thread.setDefaultUncaughtExceptionHandler(restartHandler);
     }
 
     @Override
