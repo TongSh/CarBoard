@@ -69,13 +69,16 @@ public class Main2Activity extends Activity {
                 Intent it = new Intent();
                 it.setClass(Main2Activity.this,MainActivity.class);
                 startActivity(it);
-                Toast.makeText(this, "music", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(this, "music", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.vedio:
                 Toast.makeText(this, "Vedio", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.phone:
-                Toast.makeText(this, "电话", Toast.LENGTH_SHORT).show();
+                Intent it2 = new Intent();
+                it2.setClass(Main2Activity.this,MapActivity.class);
+                startActivity(it2);
+//                Toast.makeText(this, "电话", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.message:
                 Toast.makeText(this, "Map", Toast.LENGTH_SHORT).show();

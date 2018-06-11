@@ -95,7 +95,7 @@
                     android:layout_height="wrap_content"
                     android:adjustViewBounds="true"
                     android:scaleType="fitXY"
-                    android:src="@drawable/phone"/>
+                    android:src="@drawable/maps"/>
                 <TextView
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"

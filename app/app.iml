@@ -140,6 +140,7 @@
     <orderEntry type="library" name="com.google.code.gson:gson:2.3.1@jar" level="project" />
     <orderEntry type="library" name="com.squareup.okio:okio:1.6.0@jar" level="project" />
     <orderEntry type="library" name="com.android.support.constraint:constraint-layout-solver:1.1.1@jar" level="project" />
+    <orderEntry type="library" name="__local_aars__:E.\AndroidCode\remusic-master\app\libs\BaiduLBS_Android.jar:unspecified@jar" level="project" />
     <orderEntry type="library" name="com.facebook.fresco:imagepipeline-base-0.9.0" level="project" />
     <orderEntry type="library" name="__local_aars__:E.\AndroidCode\remusic-master\app\libs\mail.jar:unspecified@jar" level="project" />
     <orderEntry type="library" name="com.squareup.retrofit:retrofit:1.9.0@jar" level="project" />
