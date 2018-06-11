@@ -50,7 +50,7 @@ public class MainActivity extends BaseActivity implements CardPickerDialog.Click
 
     public void onCreate(Bundle savedInstanceState) {
         splashScreen = new SplashScreen(this);
-        splashScreen.show(R.drawable.art_login_bg,
+        splashScreen.show(R.drawable.mbg,
                 SplashScreen.SLIDE_LEFT);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
