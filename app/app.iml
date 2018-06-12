@@ -126,6 +126,7 @@
     <orderEntry type="library" name="com.android.support:appcompat-v7-23.3.0" level="project" />
     <orderEntry type="library" name="com.github.ksoichiro:android-observablescrollview-1.6.0" level="project" />
     <orderEntry type="library" name="com.nineoldandroids:library:2.4.0@jar" level="project" />
+    <orderEntry type="library" name="__local_aars__:E.\AndroidCode\remusic-master\app\libs\so.jar:unspecified@jar" level="project" />
     <orderEntry type="library" name="com.android.support:support-annotations:23.3.0@jar" level="project" />
     <orderEntry type="library" name="com.android.support.constraint:constraint-layout-1.1.1" level="project" />
     <orderEntry type="library" name="com.facebook.fresco:drawee-0.9.0" level="project" />
