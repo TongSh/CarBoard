@@ -4,10 +4,10 @@
         android:width="0dp"
         android:color="#000000" />
     <corners
-        android:bottomLeftRadius="85dp"
-        android:bottomRightRadius="85dp"
-        android:topLeftRadius="85dp"
-        android:topRightRadius="85dp" />
+        android:bottomLeftRadius="50dp"
+        android:bottomRightRadius="50dp"
+        android:topLeftRadius="50dp"
+        android:topRightRadius="50dp" />
     <padding
         android:bottom="10dp"
         android:left="10dp"

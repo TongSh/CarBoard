@@ -1,73 +1,84 @@
 package com.wm.remusic.activity;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.AlertDialog;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.SoundPool;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.hanheng.a53.beep.BeepClass;
 import com.hanheng.a53.dip.DipClass;
 import com.hanheng.a53.led.LedClass;
 import com.hanheng.a53.relay.RelayClass;
+import com.hanheng.a53.seg7.Seg7Class;
 import com.wm.remusic.R;
 
+import java.io.File;
 import java.util.Random;
 
 import static java.lang.Thread.sleep;
 
 public class Main2Activity extends Activity {
     /**探测过程**/
-    public final static int DETECT_PROGRESS =0;
+    public final static int DETECT_PROGRESS = 0;
     /* 拨码开关 */
-    public final static int SWITCH_STATE =1;
-
+    public final static int SWITCH_STATE = 1;
+    public static final int BEEP_ON = 0;
+    public static final int BEEP_OFF = 1;
+    /* in back */
+    public boolean inVedio = false;
 
 
     @SuppressLint("HandlerLeak")
-    public Handler handler = new Handler(){
-        public void handleMessage(Message msg){
-            switch(msg.what){
+    public Handler handler = new Handler() {
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
                 case DETECT_PROGRESS:
                     int dist = msg.arg1;
-                    Toast.makeText(Main2Activity.this,"车距过近，请注意！！！",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Main2Activity.this, "车距过近，请注意！！！", Toast.LENGTH_SHORT).show();
                     alarm(1);
                     getDistance();
                     break;
                 case SWITCH_STATE:
                     computed(msg.arg1);
-//                    switch (msg.arg1){
-//
-//                    }
                     break;
             }
             super.handleMessage(msg);
         }
     };
 
-    //	拨码开关状态显示
-    public void computed(int val){
-        String str=addZero(val);
-        char[] cr=str.toCharArray();
+    //	拨码开关状态
+    public void computed(int val) {
+        String str = addZero(val);
+        char[] cr = str.toCharArray();
         int tag;
-        for(int i=0;i<cr.length;i++){
-            if(cr[i]=='0'){
+        for (int i = 0; i < cr.length; i++) {
+            if (cr[i] == '0') {
                 try {
-                    changeState(i,0);
+                    changeState(i, 0);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-            }else{
+            } else {
                 try {
-                    changeState(i,1);
+                    changeState(i, 1);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -75,65 +86,36 @@ public class Main2Activity extends Activity {
         }
     }
 
+    private SoundPool bgmusic;
+    private int bgsound;
+    private static final String FILE_PATH = "/sdcard/sysvideocamera.3gp";
+
+    public void backDrive() {
+        bgmusic.play(bgsound, 0.6f, 0.6f, 1, -1, 1);
+        Intent intent = new Intent();
+        intent.setAction("android.media.action.VIDEO_CAPTURE");
+        intent.addCategory("android.intent.category.DEFAULT");
+        File file = new File(FILE_PATH);
+        if (file.exists()) {
+            file.delete();
+        }
+        Uri uri = Uri.fromFile(file);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+        startActivityForResult(intent, 666);
+    }
 
     //	改变拨码开关的状态
-    public void changeState(int i,int tag) throws InterruptedException {
-        if(tag==0){
+    public void changeState(int i, int tag) throws InterruptedException {
+        if (tag == 0) {
             switch (i) {
-//                case 0:
-//                    tb8.setChecked(true);
-//                    break;
-//                case 1:
-//                    tb7.setChecked(true);
-//                    break;
-//                case 2:
-//                    tb6.setChecked(true);
-//                    break;
-//                case 3:
-//                    tb5.setChecked(true);
-//                    break;
-//                case 4:
-////                    tb4.setChecked(true);
-//                    textsudu.setText("检查车速");
-//                    int min=0;
-//                    int max=300;
-//                    Random random = new Random();
-//                    int num = random.nextInt(max)%(max-min+1) + min;
-//                    if(num>150){
-//                        textsudu.setText("您已超速，请减速");
-//                        try {
-//                            if (mp3 != null) {
-//                                mp3.stop();
-//                            }
-//                            mp3.prepare();         //进入到准备状态
-//                            mp3.start();
-//                            sleep(100);//开始播放
-//                            //  state.setText("Playing");  //改变输出信息为“Playing”，下同
-//                        } catch (Exception e) {
-//                            //  state.setText(e.toString());//以字符串的形式输出异常
-//                            e.printStackTrace();  //在控制台（control）上打印出异常
-//                        }
-//                    }
-//                    else{
-//                        textsudu.setText("速度正常，请继续保持");
-//                        try {
-//                            if (mp3 != null) {
-//                                mp3.stop();
-//                                //state.setText("stop");
-//                            }
-//                        } catch (Exception e) {
-//                            //  state.setText(e.toString());
-//                            e.printStackTrace();
-//                        }
-//                    }
-//                    String str = addZero1(String.valueOf(num));
-//                    Seg7Class.Seg7Show(num);
-//                    break;
                 case 4:
-
+                    if (!inVedio) {
+                        inVedio = true;
+                        backDrive();
+                    }
+                    break;
                 case 5:
-                    Toast.makeText(Main2Activity.this,"右转",Toast.LENGTH_LONG).show();
-                    for(int j=0;j<2;j++){
+                    for (int j = 0; j < 2; j++) {
                         LedClass.IoctlLed(2, 1);
                         LedClass.IoctlLed(3, 1);
                         RelayClass.IoctlRelay(1, 1);
@@ -145,8 +127,7 @@ public class Main2Activity extends Activity {
                     }
                     break;
                 case 6:
-                    Toast.makeText(Main2Activity.this,"左转",Toast.LENGTH_LONG).show();
-                    for(int j=0;j<2;j++){
+                    for (int j = 0; j < 2; j++) {
                         LedClass.IoctlLed(0, 1);
                         LedClass.IoctlLed(1, 1);
                         RelayClass.IoctlRelay(1, 1);
@@ -165,46 +146,26 @@ public class Main2Activity extends Activity {
                 default:
                     break;
             }
-        }else{
+        } else {
             switch (i) {
-//                case 0:
-//                    tb8.setChecked(false);
-//                    break;
-//                case 1:
-//                    tb7.setChecked(false);
-//                    break;
-//                case 2:
-//                    tb6.setChecked(false);
-//                    break;
-//                case 3:
-//                    tb5.setChecked(false);
-//                    break;
-//                case 4:
-//                    tb4.setChecked(false);
-//                    Seg7Class.Exit();
-//                    try {
-//                        if (mp3 != null) {
-//                            mp3.stop();
-//                            //state.setText("stop");
-//                        }
-//                    } catch (Exception e) {
-//                        //  state.setText(e.toString());
-//                        e.printStackTrace();
-//                    }
-//                    break;
+                case 4:
+                    if (inVedio) {
+                        inVedio = false;
+                        bgmusic.autoPause();
+                        finishActivity(666);
+                    }
+                    break;
                 case 5:
                     LedClass.IoctlLed(0, 0);
                     LedClass.IoctlLed(1, 0);
                     LedClass.IoctlLed(2, 0);
                     LedClass.IoctlLed(3, 0);
-//                    tb3.setChecked(false);
                     break;
                 case 6:
                     LedClass.IoctlLed(0, 0);
                     LedClass.IoctlLed(1, 0);
                     LedClass.IoctlLed(2, 0);
                     LedClass.IoctlLed(3, 0);
-//                    tb2.setChecked(false);
                     break;
 //                case 7:
 //                    tb1.setChecked(false);
@@ -218,23 +179,24 @@ public class Main2Activity extends Activity {
     }
 
     //	字符串补零
-    public String addZero(int b){
-        String val = Integer.toBinaryString(b&0xFF);
-        String str="";
-        if(val.length()<8){
-            for(int i=0;i<8-val.length();i++){
-                str+=0;
+    public String addZero(int b) {
+        String val = Integer.toBinaryString(b & 0xFF);
+        String str = "";
+        if (val.length() < 8) {
+            for (int i = 0; i < 8 - val.length(); i++) {
+                str += 0;
             }
-            return str+=val;
+            return str += val;
         }
         return val;
     }
 
     private SoundPool sp;
+
     public void alarm(int content) {
-        sp =new SoundPool(10, AudioManager.STREAM_MUSIC,0);
+        sp = new SoundPool(10, AudioManager.STREAM_MUSIC, 0);
         final int soundID_1 = sp.load(getApplicationContext(), R.raw.alarm, 1);
-        Log.i("ALARM","!!!");
+        Log.i("ALARM", "!!!");
         sp.setOnLoadCompleteListener(new SoundPool.OnLoadCompleteListener() {
             @Override
             public void onLoadComplete(SoundPool soundPool, int sampleId, int status) {
@@ -245,39 +207,60 @@ public class Main2Activity extends Activity {
 
 
     private AlertDialog mProgressDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
-//        getDistance();
-
         LedClass.Init();
         RelayClass.Init();
+        Seg7Class.Init();
+        BeepClass.Init();
         getDip();
+        getDistance();
+        getSpeed();
+
+        bgmusic = new SoundPool(10, AudioManager.STREAM_MUSIC, 0);
+        bgsound = bgmusic.load(getApplicationContext(), R.raw.sky, 1);
+        try {
+            sleep(100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     public void onClickListener(View v) {
-
         switch (v.getId()) {
             case R.id.music:
                 Intent it = new Intent();
-                it.setClass(Main2Activity.this,MainActivity.class);
+                it.setClass(Main2Activity.this, MainActivity.class);
                 startActivity(it);
 //                Toast.makeText(this, "music", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.vedio:
 //                Toast.makeText(this, "Vedio", Toast.LENGTH_SHORT).show();
                 Intent it1 = new Intent();
-                it1.setClass(Main2Activity.this,SysVideoCameraActivity.class);
+                it1.setClass(Main2Activity.this, SysVideoCameraActivity.class);
                 startActivity(it1);
                 break;
             case R.id.phone:
+                Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:10086"));
+                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                    // TODO: Consider calling
+                    //    ActivityCompat#requestPermissions
+                    // here to request the missing permissions, and then overriding
+                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                    //                                          int[] grantResults)
+                    // to handle the case where the user grants the permission. See the documentation
+                    // for ActivityCompat#requestPermissions for more details.
+                    return;
+                }
+                startActivity(intent);
+                break;
+            case R.id.message:
                 Intent it2 = new Intent();
                 it2.setClass(Main2Activity.this,MapActivity.class);
                 startActivity(it2);
-//                Toast.makeText(this, "电话", Toast.LENGTH_SHORT).show();
-                break;
-            case R.id.message:
                 Toast.makeText(this, "Map", Toast.LENGTH_SHORT).show();
                 break;
             default:
@@ -298,7 +281,7 @@ public class Main2Activity extends Activity {
                         msgMessage.what=SWITCH_STATE;
                         msgMessage.arg1=value;
                         handler.sendMessage(msgMessage);
-                        sleep(500);
+                        sleep(900);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -319,9 +302,8 @@ public class Main2Activity extends Activity {
                         handler.sendMessage(msg);
                         return;
                     }
-                    Log.i("id is ---", i + "\n");
                     try {
-                        sleep(1 * 100);
+                        sleep(5000);
                     } catch (InterruptedException e) {
                         // TODO Auto-generated catch block
                         e.printStackTrace();
@@ -329,5 +311,56 @@ public class Main2Activity extends Activity {
                 }
             }
         }.start();
+    }
+
+    public void getSpeed(){
+        new Thread(){
+            public void run(){
+                Message msg = new Message();
+                int arg = 60;
+                int temp = 1;
+                while (true){
+                    if(arg > 65)
+                        temp = -1;
+                    if(arg < 60)
+                        temp = 1;
+                    arg = arg + temp;
+                    updateText(arg);
+                    if (arg > 65) {
+//                        BeepClass.IoctlRelay(BEEP_ON);    //调用JNI的IOCTLBEEP函数
+                    }else {
+                        BeepClass.IoctlRelay(BEEP_OFF);    //调用JNI的IOCTLBEEP函数
+                    }
+                    try {
+                        sleep(2000);
+                    } catch (InterruptedException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }.start();
+    }
+
+
+    public String segZero(String content) {
+        int count = 4 - content.length();
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0; i < count; i++) {
+            sb.append("0");
+        }
+        StringBuffer str = sb.append(content);
+        return str.toString();
+    }
+    public void updateText(final int arg){
+        String str = segZero(String.valueOf(arg));
+        /**
+         * 请在此补充硬件调用函数
+         */
+        new Thread(new Runnable() {
+            public void run() {
+                Seg7Class.Seg7Show(arg);
+            }
+        }).start();
     }
 }
