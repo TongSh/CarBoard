@@ -30,8 +30,8 @@ public class SysVideoCameraActivity extends Activity {
 		@Override
 		public void onClick(View v) {
 			Intent intent = new Intent();
-			intent.setAction("MediaStore.ACTION_IMAGE_CAPTURE");
-//			intent.addCategory("android.intent.category.DEFAULT");
+			intent.setAction("android.media.action.VIDEO_CAPTURE");
+			intent.addCategory("android.intent.category.DEFAULT");
 			File file = new File(FILE_PATH);
 			if(file.exists()){
 				file.delete();

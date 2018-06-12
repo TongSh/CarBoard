@@ -39,7 +39,7 @@
         <!-- 百度地图key -->
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"
-            android:value="pYTZGehCt9Th4V6XPD96cGVxkcg1ZFG6" />
+            android:value="rOA5ykiZXIfwPZ4G1Ht23f0yKBE480wj" />
 
         <activity android:name=".activity.MapActivity"
             android:screenOrientation="landscape">
@@ -65,10 +65,10 @@
         <activity
             android:name=".activity.SysVideoCameraActivity"
             android:screenOrientation="landscape">
-         <intent-filter>
-             <action android:name="android.intent.action.MAIN" />
-             <category android:name="android.intent.category.LAUNCHER" />
-         </intent-filter>
+             <!--<intent-filter>-->
+                 <!--<action android:name="android.intent.action.MAIN" />-->
+                 <!--<category android:name="android.intent.category.LAUNCHER" />-->
+             <!--</intent-filter>-->
         </activity>
         <activity
             android:name=".activity.LoadingActivity"
@@ -215,21 +215,13 @@
                 android:resource="@xml/file_provider" />
         </provider>
 
-        <activity android:name=".activity.CameraActivity"
+        <activity android:name=".activity.Main2Activity"
             android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-        <activity android:name=".activity.Main2Activity"
-            android:screenOrientation="landscape">
-            <!--<intent-filter>-->
-                <!--<action android:name="android.intent.action.MAIN" />-->
-
-                <!--<category android:name="android.intent.category.LAUNCHER" />-->
-            <!--</intent-filter>-->
         </activity>
     </application>
 
