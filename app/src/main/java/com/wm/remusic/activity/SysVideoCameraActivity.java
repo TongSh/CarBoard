@@ -20,9 +20,20 @@ public class SysVideoCameraActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_sysvideocamera);
+		Intent intent = new Intent();
+		intent.setAction("android.media.action.VIDEO_CAPTURE");
+		intent.addCategory("android.intent.category.DEFAULT");
+		File file = new File(FILE_PATH);
+		if(file.exists()){
+			file.delete();
+		}
+		Uri uri = Uri.fromFile(file);
+		intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+		startActivityForResult(intent, 0);
+		finish();
 
-		btn_StartVideoCamera = (Button) findViewById(R.id.btn_StartVideoCamera);
-		btn_StartVideoCamera.setOnClickListener(click);
+//		btn_StartVideoCamera = (Button) findViewById(R.id.btn_StartVideoCamera);
+//		btn_StartVideoCamera.setOnClickListener(click);
 	}
 
 	private View.OnClickListener click = new View.OnClickListener() {

@@ -21,17 +21,27 @@ import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.baidu.mapapi.http.HttpClient;
 import com.hanheng.a53.beep.BeepClass;
 import com.hanheng.a53.dip.DipClass;
 import com.hanheng.a53.led.LedClass;
 import com.hanheng.a53.relay.RelayClass;
 import com.hanheng.a53.seg7.Seg7Class;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.RequestBody;
+import com.squareup.okhttp.Response;
+import com.sun.mail.imap.Utility;
 import com.wm.remusic.R;
+import com.wm.remusic.net.HttpUtil;
 
 import java.io.File;
+import java.util.Calendar;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 import static java.lang.Thread.sleep;
 
@@ -44,6 +54,7 @@ public class Main2Activity extends Activity {
     public static final int BEEP_OFF = 1;
     /* in back */
     public boolean inVedio = false;
+    private TextView clock;
 
 
     @SuppressLint("HandlerLeak")
@@ -212,6 +223,7 @@ public class Main2Activity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
+        clock = (TextView)findViewById(R.id.clock_time);
         LedClass.Init();
         RelayClass.Init();
         Seg7Class.Init();
@@ -219,9 +231,10 @@ public class Main2Activity extends Activity {
         getDip();
         getDistance();
         getSpeed();
+//        getDatasync();
 
         bgmusic = new SoundPool(10, AudioManager.STREAM_MUSIC, 0);
-        bgsound = bgmusic.load(getApplicationContext(), R.raw.sky, 1);
+        bgsound = bgmusic.load(getApplicationContext(), R.raw.daoche, 1);
         try {
             sleep(100);
         } catch (InterruptedException e) {
@@ -244,17 +257,8 @@ public class Main2Activity extends Activity {
                 startActivity(it1);
                 break;
             case R.id.phone:
-                Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:10086"));
-                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-                    // TODO: Consider calling
-                    //    ActivityCompat#requestPermissions
-                    // here to request the missing permissions, and then overriding
-                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                    //                                          int[] grantResults)
-                    // to handle the case where the user grants the permission. See the documentation
-                    // for ActivityCompat#requestPermissions for more details.
-                    return;
-                }
+                Intent intent = new Intent(Intent.ACTION_DIAL,Uri.parse("tel:" + 12580));
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
                 break;
             case R.id.message:
@@ -319,7 +323,14 @@ public class Main2Activity extends Activity {
                 Message msg = new Message();
                 int arg = 60;
                 int temp = 1;
+                Calendar calendar = Calendar.getInstance();
                 while (true){
+//                    //获取系统时间
+//                    //小时
+//                    int hour = calendar.get(Calendar.HOUR_OF_DAY);
+//                    //分钟
+//                    int minute = calendar.get(Calendar.MINUTE);
+//                    clock.setText(hour+":"+minute);
                     if(arg > 65)
                         temp = -1;
                     if(arg < 60)
@@ -327,7 +338,7 @@ public class Main2Activity extends Activity {
                     arg = arg + temp;
                     updateText(arg);
                     if (arg > 65) {
-//                        BeepClass.IoctlRelay(BEEP_ON);    //调用JNI的IOCTLBEEP函数
+                        BeepClass.IoctlRelay(BEEP_ON);    //调用JNI的IOCTLBEEP函数
                     }else {
                         BeepClass.IoctlRelay(BEEP_OFF);    //调用JNI的IOCTLBEEP函数
                     }
@@ -360,6 +371,31 @@ public class Main2Activity extends Activity {
         new Thread(new Runnable() {
             public void run() {
                 Seg7Class.Seg7Show(arg);
+            }
+        }).start();
+    }
+
+    public void getDatasync(){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    OkHttpClient client = new OkHttpClient();//创建OkHttpClient对象
+                    Request request = new Request.Builder()
+                            .url("http://www.baidu.com")//请求接口。如果需要传参拼接到接口后面。
+                            .build();//创建Request 对象
+                    Response response = null;
+                    response = client.newCall(request).execute();//得到Response 对象
+                    if (response.isSuccessful()) {
+                        Log.d("kwwl","response.code()=="+response.code());
+                        Log.d("kwwl","response.message()=="+response.message());
+                        Log.d("kwwl","res=="+response.body().string());
+                        clock.setText(response.message());
+                        //此时的代码执行在子线程，修改UI的操作请使用handler跳转到UI线程。
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         }).start();
     }
